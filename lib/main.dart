@@ -51,15 +51,21 @@ class AppState extends State<App> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(children: <Widget>[
-        _buildOffstageNavigator(TabItem.red),
-        _buildOffstageNavigator(TabItem.green),
-        _buildOffstageNavigator(TabItem.blue),
-      ]),
-      bottomNavigationBar: BottomNavigation(
-        currentTab: _currentTab,
-        onSelectTab: _selectTab,
+    //willpop은 그...안드로이드에서 back button누르면 앱에서 빠져나가는게 아니라 stack을 하나 지워주는 거.
+    return WillPopScope(
+      onWillPop: () async =>
+          !await _navigatorKeys[_currentTab]!.currentState!.maybePop(),
+      child: Scaffold(
+        body: Stack(children: <Widget>[
+          //아 _buildOffstageNavigator에서 multi가 가능하게 하는 구나.
+          _buildOffstageNavigator(TabItem.red),
+          _buildOffstageNavigator(TabItem.green),
+          _buildOffstageNavigator(TabItem.blue),
+        ]),
+        bottomNavigationBar: BottomNavigation(
+          currentTab: _currentTab,
+          onSelectTab: _selectTab,
+        ),
       ),
     );
   }
